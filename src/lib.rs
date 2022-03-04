@@ -1,5 +1,35 @@
+use std::collections::{HashSet, VecDeque};
+
 pub fn word_chain_game(start: &str, end: &str, words: &[String]) -> Option<usize> {
-    todo!();
+    let mut visited: HashSet<&str> = HashSet::new();
+    let mut q: VecDeque<(&str, usize)> = VecDeque::new();
+
+    q.push_back((start, 0));
+
+    loop {
+        let (s, l) = q.pop_front()?;
+
+        visited.insert(s);
+
+        if s == end {
+            return Some(l);
+        }
+
+        let l = l + 1;
+        for w in words {
+            if !visited.contains(w.as_str()) && hamming_distance(s, w) == 1 {
+                q.push_back((w, l));
+            }
+        }
+    }
+}
+
+fn hamming_distance(s1: &str, s2: &str) -> usize {
+    s1.as_bytes()
+        .iter()
+        .zip(s2.as_bytes())
+        .map(|(c1, c2)| if c1 == c2 { 0 } else { 1 })
+        .sum()
 }
 
 #[cfg(test)]
